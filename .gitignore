@@ -1,0 +1,4 @@
+.spotipyoauthcache
+instance/rfid_spotify.db
+mfrc522/__pycache__
+.env
