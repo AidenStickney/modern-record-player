@@ -1,4 +1,4 @@
-![Modern Record Player Logo](https://i.imgur.com/df6ZI8p.png)
+![Modern Record Player Logo](assets/banner.png)
 
 ## Introduction
 
