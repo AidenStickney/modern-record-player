@@ -15,43 +15,85 @@ This application integrates RFID technology with Spotify's playback features. Us
 ## Installation
 
 1. Clone the repository:
-  ```bash
-    git clone https://github.com/AidenStickney/modern-record-player.git
-  ```
-2. Navigate to the project directory:
-  ```bash
-    cd modern-record-player
-  ```
-3. Install Pipenv, if not already installed:
-  ```bash
-    pip install pipenv
-  ```
-4. Install dependencies using Pipenv:
-  ```bash
-    pipenv install
-  ```
 
-## Configuration
+```bash
+  git clone https://github.com/AidenStickney/modern-record-player.git
+```
+
+2. Navigate to the project directory:
+
+```bash
+  cd modern-record-player
+```
+
+3. Install Pipenv, if not already installed:
+
+```bash
+  pip install pipenv
+```
+
+4. Install dependencies using Pipenv:
+
+```bash
+  pipenv install
+```
+
+Configuration
+
+### Environment Setup
 
 1. Set up environment variables in a `.env` file:
-  - `SECRET_KEY`: Flask secret key.
-  - `DB_LOCATION`: Database URI for SQLAlchemy.
-  - `FLASK_DEBUG`: Enable/disable Flask debug mode.
-  - `FLASK_PORT`: Port for the Flask application.
-  - `CLIENT_ID`, `CLIENT_SECRET`, `REDIRECT_URI`: Spotify API credentials.
-  
-2. Run `load_dotenv()` to load these settings.
+
+- `SECRET_KEY`: Flask secret key.
+- `DB_LOCATION`: Database URI for SQLAlchemy.
+- `FLASK_DEBUG`: Enable/disable Flask debug mode.
+- `FLASK_PORT`: Port for the Flask application.
+
+### Spotify API Credentials
+
+To use the Spotify features in this application, you need to set up Spotify API credentials:
+
+1. **Create a Spotify Developer Account**: Sign up or log in at [Spotify](https://www.spotify.com/) and visit the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/).
+
+2. **Register Your Application**: Click `Create an App` on the dashboard. Fill in the details and accept the terms.
+
+3. **Get Your Client ID and Client Secret**: After creating your app, you'll see your `Client ID` and `Client Secret` on the dashboard.
+
+4. **Set the Redirect URI**:
+
+- Use your Raspberry Pi's IP address in the Redirect URI (e.g., http://[Your-Raspberry-Pi-IP]:5000/callback).
+- This is important as the authentication will be done from another device connecting to your Pi's web server.
+- Add this URI in your application settings on the Spotify Developer Dashboard.
+
+6. **Add Credentials to Your Project**:
+
+- In the `.env` file, add the following lines:
+
+```env
+  CLIENT_ID='your-spotify-client-id'
+  CLIENT_SECRET='your-spotify-client-secret'
+  REDIRECT_URI='http://[Your-Raspberry-Pi-IP]:5000/callback'
+```
+
+- Replace [Your-Raspberry-Pi-IP] with the actual IP address of your Raspberry Pi.
+- Ensure that this `.env` file is included in your `gitignore`.
+
+6. Run `load_dotenv()` to load these settings.
 
 ## Usage
 
 1. Activate the Pipenv shell:
-  ```bash
-    pipenv shell
-  ```
+
+```bash
+  pipenv shell
+```
+
 2. Start the Flask app:
-  ```bash
-    python app.py
-  ```
+
+```bash
+  python app.py
+```
+
 3. Navigate to the provided URL to access the web interface.
 4. Authenticate with Spotify.
 5. Register new RFID tags and link them to Spotify URIs.
