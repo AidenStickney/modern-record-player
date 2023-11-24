@@ -16,27 +16,27 @@ This application integrates RFID technology with Spotify's playback features. Us
 
 1. Clone the repository:
 
-```bash
-  git clone https://github.com/AidenStickney/modern-record-player.git
-```
+   ```bash
+     git clone https://github.com/AidenStickney/modern-record-player.git
+   ```
 
 2. Navigate to the project directory:
 
-```bash
-  cd modern-record-player
-```
+   ```bash
+     cd modern-record-player
+   ```
 
 3. Install Pipenv, if not already installed:
 
-```bash
-  pip install pipenv
-```
+   ```bash
+     pip install pipenv
+   ```
 
 4. Install dependencies using Pipenv:
 
-```bash
-  pipenv install
-```
+   ```bash
+     pipenv install
+   ```
 
 ## Configuration
 
@@ -44,54 +44,56 @@ This application integrates RFID technology with Spotify's playback features. Us
 
 1. Connect the RFID-RC522 module to your Raspberry Pi's GPIO pins:
 
-![RFID-RC522 Pinout](https://pimylifeup.com/wp-content/uploads/2017/10/RFID-Fritz-v2.png)
+   ![RFID-RC522 Pinout](https://pimylifeup.com/wp-content/uploads/2017/10/RFID-Fritz-v2.png)
 
 2. Ensure that SPI is enabled on your Raspberry Pi:
 
-```bash
-  sudo raspi-config
-```
+   ```bash
+     sudo raspi-config
+   ```
 
 - Select `Interfacing Options` and enable SPI.
 
 3. Install Python 3 SPI library:
 
-```bash
-  sudo apt-get install python3-spidev
-```
+   ```bash
+     sudo apt-get install python3-spidev
+   ```
 
 4. Reboot your Raspberry Pi:
 
-```bash
-  sudo reboot
-```
+   ```bash
+     sudo reboot
+   ```
 
 If the SPI module is not activated, you may need to enable it in the kernel:
 
-- Enable SPI in the kernel:
+1. Enable SPI in the kernel:
 
-```bash
-  sudo nano /boot/config.txt
-```
+   ```bash
+     sudo nano /boot/config.txt
+   ```
 
-- Add the following line:
+2. Add the following line:
 
-```bash
-  dtparam=spi=on
-```
+   ```bash
+     dtparam=spi=on
+   ```
 
-- Save the file and reboot.
+3. Save the file and reboot.
 
 For a more detailed guide, see [this tutorial](https://pimylifeup.com/raspberry-pi-rfid-rc522/).
 
 ### Environment Setup
 
-1. Set up environment variables in a `.env` file:
+Set up environment variables in a `.env` file:
 
 - `SECRET_KEY`: Flask secret key.
 - `DB_LOCATION`: Database URI for SQLAlchemy.
 - `FLASK_DEBUG`: Enable/disable Flask debug mode.
 - `FLASK_PORT`: Port for the Flask application.
+
+See `.env.example` for an example.
 
 ### Spotify API Credentials
 
@@ -109,15 +111,15 @@ To use the Spotify features in this application, you need to set up Spotify API 
 - This is important as the authentication will be done from another device connecting to your Pi's web server.
 - Add this URI in your application settings on the Spotify Developer Dashboard.
 
-6. **Add Credentials to Your Project**:
+5. **Add Credentials to Your Project**:
 
 - In the `.env` file, add the following lines:
 
-```env
-  CLIENT_ID='your-spotify-client-id'
-  CLIENT_SECRET='your-spotify-client-secret'
-  REDIRECT_URI='http://[Your-Raspberry-Pi-IP]:5000/callback'
-```
+  ```env
+    CLIENT_ID='your-spotify-client-id'
+    CLIENT_SECRET='your-spotify-client-secret'
+    REDIRECT_URI='http://[Your-Raspberry-Pi-IP]:5000/callback'
+  ```
 
 - Replace [Your-Raspberry-Pi-IP] with the actual IP address of your Raspberry Pi.
 - Ensure that this `.env` file is included in your `gitignore`.
@@ -128,15 +130,15 @@ To use the Spotify features in this application, you need to set up Spotify API 
 
 1. Activate the Pipenv shell:
 
-```bash
-  pipenv shell
-```
+   ```bash
+     pipenv shell
+   ```
 
 2. Start the Flask app:
 
-```bash
-  python app.py
-```
+   ```bash
+     python app.py
+   ```
 
 3. Navigate to the IP address of your Raspberry Pi in a web browser.
 4. You will then be redirected to the Spotify authentication page.
@@ -145,6 +147,79 @@ To use the Spotify features in this application, you need to set up Spotify API 
 7. Enter a link to a Spotify album, playlist, or track and click `Register Tag`.
 8. Once the tag is registered, you can scan it to start playback of the linked Spotify content.
 9. To update the Spotify URI associated with a tag, simply scan the tag and register a new album, playlist, or track.
+
+## Running as a Background Service
+
+To ensure the application runs continuously, even after a reboot, you can set it up as a background service on your Raspberry Pi. Follow these steps to create a systemd service:
+
+### Creating a Systemd Service
+
+1. **Create a Service File**:
+
+   Create a new systemd service file using your preferred text editor, such as nano:
+
+   ```bash
+     sudo nano /etc/systemd/system/modernrecordplayer.service
+   ```
+
+2. **Add the Following Content to the File**:
+
+   Replace `/path/to/your/app` with the actual path to your application and replace `/path/to/your/app/Pipfile` with the actual path to your Pipfile.
+
+   ```
+     [Unit]
+     Description=Modern Record Player Service
+     After=network.target
+
+     [Service]
+     User=pi
+     WorkingDirectory=/path/to/your/app
+     ExecStart=/bin/bash -c 'PIPENV_PIPFILE=/path/to/your/app/Pipfile pipenv run python /path/to/your/app/app.py'
+     Restart=always
+
+     [Install]
+     WantedBy=multi-user.target
+   ```
+
+   This configuration sets up a service that uses pipenv run to start your application within the pipenv environment after the network is available. It will also restart the application automatically if it crashes.
+
+3. **Enable and Start the Service**:
+
+   Enable the service so that it starts on boot, and then start the service:
+
+   ```bash
+     sudo systemctl enable modernrecordplayer.service
+     sudo systemctl start modernrecordplayer.service
+   ```
+
+4. **Checking the Service Status**:
+
+   You can check the status of your service to ensure it's running correctly:
+
+   ```bash
+     sudo systemctl status modernrecordplayer.service
+   ```
+
+### Managing the Service
+
+- To **stop** the service:
+
+  ```bash
+    sudo systemctl stop modernrecordplayer.service
+  ```
+
+- To **restart** the service:
+
+  ```bash
+    sudo systemctl restart modernrecordplayer.service
+  ```
+
+- To **disable** the service from starting on boot:
+  ```bash
+    sudo systemctl disable modernrecordplayer.service
+  ```
+
+By setting up your application as a systemd service, you ensure that it's always running in the background and starts automatically when your Raspberry Pi boots up.\n\n
 
 ## Endpoints
 
