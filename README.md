@@ -38,7 +38,51 @@ This application integrates RFID technology with Spotify's playback features. Us
   pipenv install
 ```
 
-Configuration
+## Configuration
+
+### Hardware Setup
+
+1. Connect the RFID-RC522 module to your Raspberry Pi's GPIO pins:
+
+![RFID-RC522 Pinout](https://pimylifeup.com/wp-content/uploads/2017/10/RFID-Fritz-v2.png)
+
+2. Ensure that SPI is enabled on your Raspberry Pi:
+
+```bash
+  sudo raspi-config
+```
+
+- Select `Interfacing Options` and enable SPI.
+
+3. Install Python 3 SPI library:
+
+```bash
+  sudo apt-get install python3-spidev
+```
+
+4. Reboot your Raspberry Pi:
+
+```bash
+  sudo reboot
+```
+
+If the SPI module is not activated, you may need to enable it in the kernel:
+
+- Enable SPI in the kernel:
+
+```bash
+  sudo nano /boot/config.txt
+```
+
+- Add the following line:
+
+```bash
+  dtparam=spi=on
+```
+
+- Save the file and reboot.
+
+For a more detailed guide, see [this tutorial](https://pimylifeup.com/raspberry-pi-rfid-rc522/).
 
 ### Environment Setup
 
@@ -94,9 +138,13 @@ To use the Spotify features in this application, you need to set up Spotify API 
   python app.py
 ```
 
-3. Navigate to the provided URL to access the web interface.
-4. Authenticate with Spotify.
-5. Register new RFID tags and link them to Spotify URIs.
+3. Navigate to the IP address of your Raspberry Pi in a web browser.
+4. You will then be redirected to the Spotify authentication page.
+5. After authenticating, you will be redirected back to the application, indicating that the authentication was successful.
+6. With the new tag on the RFID reader, click `Register Tag` to navigate to the registration page.
+7. Enter a link to a Spotify album, playlist, or track and click `Register Tag`.
+8. Once the tag is registered, you can scan it to start playback of the linked Spotify content.
+9. To update the Spotify URI associated with a tag, simply scan the tag and register a new album, playlist, or track.
 
 ## Endpoints
 
@@ -111,6 +159,8 @@ RFID tags are read in non-blocking mode. When a tag is scanned, its ID is used t
 ## Spotify Playback
 
 The application supports different Spotify URI types such as albums, playlists, and tracks. The playback is managed through the Spotipy client.
+
+Note that the Spotify API keys will expire after an hour. To refresh the keys, simply return to the home page and reauthenticate.
 
 ## Database Model
 

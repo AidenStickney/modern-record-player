@@ -46,7 +46,7 @@ auth_manager = SpotifyOAuth(client_id=CLIENT_ID, client_secret=CLIENT_SECRET,
 @app.route('/')
 def login():
     if auth_state['token_info']:
-        return render_template('auth_message.html', message="Already authenticated")
+        return render_template('auth_message.html', message="Already Authenticated!")
     else:
         auth_url = auth_manager.get_authorize_url()
         return redirect(auth_url)
@@ -125,7 +125,6 @@ def main_script():
                 if read_event.is_set():
                     id = reader.read_id_no_block()
                     if id:
-                        print(id)
                         handle_spotify_playback(id, sp)
                     time.sleep(2)
                 else:
