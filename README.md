@@ -179,6 +179,14 @@ Ensure that `SECRET_KEY` is set to a secure, random value to protect session dat
 - mfrc522
 - python-dotenv
 
+## Thanks
+
+- [Talaexe's Spotify-RFID-Record-Player](https://github.com/talaexe/Spotify-RFID-Record-Player) for the original idea.
+
+- [Pimylifeup](https://pimylifeup.com/raspberry-pi-rfid-rc522/) for the RFID-RC522 tutorial.
+
+- All the other open-source projects that made this project possible.
+
 ## Contributing
 
 Contributions are welcome. Please submit pull requests for any enhancements.
